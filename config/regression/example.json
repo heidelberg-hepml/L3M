@@ -1,0 +1,57 @@
+{
+    "run_name": "regression_example",
+    "DATASET_DIR": "Directory of the dataset",
+    "LLM_DIR": "Directory of the pretrained LLM",
+    "number_of_runs": 2,
+    "train_from_scratch": false,
+    "lc_connector": {
+      "cls": "linear"
+    },
+    "head": {
+      "cls": "linear"
+    },
+    "_attn_implementation": "sdpa",
+    "patch_size": [
+        10,
+        28,
+        28
+    ],
+    "preprocess": "Normalize",
+    "minimalistic_chat_template": true,
+    "num_sys_prompt_tokens": 0,
+    "num_pre_lc_tokens": 0,
+    "batch_size": 64,
+    "gradient_accumulation_steps": 1,
+    "num_train_epochs": 3,
+    "warmup_epochs": 1,
+    "decay_epochs": 1,
+    "pad_sequence": true,
+    "tf32": true,
+    "load_llm_weights": true,
+    "dataloader_threads": 5,
+    "dataloader_persistent": true,
+    "dataloader_pin_memory": true,
+    "train_ds_multiplicity": 2,
+    "epochs_per_eval": 1,
+    "epochs_for_log": 1,
+    "lr": 5.0e-5,
+    "max_grad_norm": 30,
+    "lc_drop": 0.0,
+    "lr_ratios": {
+      "lr_head": 0.0,
+      "lr_others": 0.0,
+      "lr_tok": 1.0,
+      "lr_lc": 1.0
+    },
+    "convergence_patience": 50,
+    "attn_drop": 0.001,
+    "train_head": true,
+    "train_only_head": false,
+    "train_interleaved": true,
+    "split_lc_tok_training": false,
+    "start_gradient_clipping": 0,
+    "compile": true,
+    "test_ds_size": 25,
+    "train_eval_ratio": 0.8,
+    "ds_ratio": 1.0
+  }

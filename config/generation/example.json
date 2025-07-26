@@ -1,0 +1,60 @@
+{
+    "run_name": "generation_example",
+    "DATASET_DIR": "Directory of the dataset",
+    "LLM_DIR": "Directory of the pretrained LLM",
+    "test_ds_size": 10,
+    "train_eval_ratio": 0.9,
+    "ds_ratio": 0.001,
+    "load_llm_weights": true,
+    "preprocess": "NormalizeLog",
+    "tf32": true,
+    "train_from_scratch": false,
+    "attn_implementation": "sdpa",
+    "attn_drop": 0.01,
+    "patch_size": [1, 14, 14],
+    "pad_sequence": true,
+    "minimalistic_chat_template": false,
+    "batch_size": 8,
+    "gradient_accumulation_steps": 1,
+    "warmup_epochs": 1,
+    "num_train_epochs": 3,
+    "decay_epochs": 1,
+    "lr": 0.00005,
+    "epochs_for_log": 0.1,
+    "dataloader_threads": 8,
+    "dataloader_pin_memory": true,
+    "dataloader_persistent": true,
+    "compile": false,
+    "max_grad_norm": 1,
+    "max_num_checkpoints": 2,
+    "lc_shape": [2350, 140, 140],
+    "lc_connector": {
+      "cls": "linear"
+    },
+    "cfm_connector": {
+      "cls": "cnn",
+      "cnn_config": {
+        "chs": 64,
+        "depth": 6,
+        "cond_dim": 392,
+        "kernel_size": 3
+      }
+    },
+    "parameter_connector": {
+      "cls": "linear"
+    },
+    "t_index_connector": {
+      "cls": "linear"
+    },
+    "t_init": 2,
+    "t_max": 3,
+    "chunked_sublc_size": 6,
+    "weight_decay": 0.001,
+    "compile_for_eval": false,
+    "eval_batch_size": 8,
+    "eval_generation_lcs": 2,
+    "eval_l2_lcs": 2,
+    "eval_t_max": 3,
+    "eval_t_init": 2,
+    "eval_l2_samples": 1
+}

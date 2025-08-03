@@ -4,8 +4,6 @@ from pathlib import Path
 from datetime import datetime
 import math
 
-from typing import Union
-
 import torch
 from torch.utils.data.dataloader import DataLoader
 
@@ -13,8 +11,6 @@ from src.experiments.generation.training_utils import freeze_llm_embedding, get_
 
 from src.experiments.generation.network.construct_model import construct_l3m_generator
 from src.experiments.generation.network.configuration import L3MGenerationConfig
-from src.experiments.generation.network.processing import L3MProcessorGeneration
-from src.experiments.generation.network.modeling import L3MGenerator
 from src.experiments.generation.dataset import get_collate_function, get_collate_function_generation, FCDatasetConfig, FCDataset, FCStaticData
 
 from src.utils.trainer import Trainer
@@ -24,11 +20,12 @@ from src.utils.preprocessing import get_preprocessing
 
 from src.experiments.generation.evaluation import evaluate_generation, evaluate_next_patch, evaluate_next_patch_l2
 
+from src.experiments.generation.training_utils import create_optimizer_groups
+
 import transformers
 
 from math import floor, ceil
 
-from transformers import AutoProcessor, AutoModelForCausalLM
 from peft import LoraConfig, get_peft_model
 
 import logging
@@ -354,6 +351,29 @@ if exp_config.compile:
 else:
     opt_model = model
 
+decay_parameters = decay_parameters = [name for name, _ in opt_model.named_parameters()]
+decay_parameters = [name for name in decay_parameters if "bias" not in name]
+# This can be used
+# decay_parameters = [name for name in decay_parameters if "norm" not in name]
+# decay_parameters = [name for name in decay_parameters if "token" not in name]
+
+_optimizer_grouped_parameters_lc_tok = create_optimizer_groups(
+    opt_model,
+    decay_parameters,
+    learning_rate,
+    weight_decay=exp_config.weight_decay,
+    logger=logger
+)
+
+optimizers = [
+    torch.optim.AdamW(
+        _optimizer_grouped_parameters_lc_tok,
+        lr=learning_rate,
+        weight_decay=exp_config.weight_decay,
+        betas=(0.9, 0.999)
+    )
+]
+
 trainer = Trainer(
     model=model,
     train_dataset=train_ds_loader,
@@ -366,6 +386,7 @@ trainer = Trainer(
     num_epochs=num_train_epochs,
     exp_config=exp_config,
     opt_model=opt_model,
+    optimizers=optimizers,
     train_head=False,
     train_interleaved=True,
     train_only_head=False,
